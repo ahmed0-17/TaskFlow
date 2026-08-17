@@ -10,28 +10,28 @@ A modern, responsive task management application built with React, Redux Toolkit
 
 ### Dashboard
 
-![TaskFlow Dashboard](./screenshots/dashboard.png)
+![TaskFlow Dashboard](./public/screenshots/dashboard.png)
 
 ### Tasks
 
-![TaskFlow Tasks](./screenshots/tasks.png)
+![TaskFlow Tasks](./public/screenshots/tasks.png)
 
 ### Calendar
 
-![TaskFlow Calendar](./screenshots/calendar.png)
+![TaskFlow Calendar](./public/screenshots/calendar.png)
 
 ### Analytics
 
-![TaskFlow Analytics](./screenshots/analytics.png)
+![TaskFlow Analytics](./public/screenshots/analytics.png)
 
 ### Mobile Responsive Design
 
 
 ### mobile view 1
-![TaskFlow Mobile](./screenshots/mobile1.png)
+![TaskFlow Mobile](./public/screenshots/mobile1.png)
 
  ### mobile view 2
-![TaskFlow Mobile](./screenshots/mobile2.png)
+![TaskFlow Mobile](./public/screenshots/mobile2.png)
 ---
 
 ## Features
@@ -428,9 +428,9 @@ Software Engineering Student & Frontend Developer
 
 ### Connect
 
-* GitHub: [Add GitHub Profile](https://github.com/ahmed0-17)
-* Portfolio: [Add Portfolio URL](https://ahmedalimalik-76.vercel.app)
-* LinkedIn: [Add LinkedIn Profile](www.linkedin.com/in/ahmed-ali-malik-23b919260)
+* GitHub: [Github](https://github.com/ahmed0-17)
+* Portfolio: [Portfolio](https://ahmedalimalik-76.vercel.app)
+* LinkedIn: [LinkedIn](www.linkedin.com/in/ahmed-ali-malik-23b919260)
 
 ---
 
