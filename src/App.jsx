@@ -3,7 +3,7 @@ import { Toaster } from "react-hot-toast";
 import MainLayout from "./components/layout/MainLayout";
 import DashboardPage from "./pages/DashboardPage";
 import TasksPage from "./pages/TasksPage";
-import CalendarPage from "./pages/CalenderPage";
+import CalendarPage from "./pages/CalendarPage";
 import AnalyticsPage from "./pages/AnalyticsPage";
 import SettingsPage from "./pages/SettingsPage";
 
