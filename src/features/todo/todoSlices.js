@@ -1,51 +1,74 @@
-import { createSlice , nanoid } from "@reduxjs/toolkit";
+import { createSlice, nanoid } from "@reduxjs/toolkit";
 
-let initialState={todos:[{id:1,value:"learn react",isCompleted:false},],
-editingTodo:null}
+const initialState = {
+  todos: [],
+  editingTodo: null,
+};
 
+const todoSlice = createSlice({
+  name: "todo",
+  initialState,
+  reducers: {
+    addTodo: (state, action) => {
+      const todo = {
+        id: nanoid(),
+        title: action.payload.title,
+        description: action.payload.description,
+        priority: action.payload.priority,
+        status: action.payload.status|| "Todo",
+        dueDate: action.payload.dueDate,
+        category: action.payload.category,
+        createdAt: new Date().toISOString(),
+      };
 
-let slice=createSlice({
-    name:"todo",
-    initialState,
-    reducers:{
-        addTodo:(state,action)=>{
-           let todo= {id:nanoid(),
-            value:action.payload,
-            isCompleted:false,
-            }
-            state.todos.push(todo)            
-         
-        },
-        deleteTodo:(state,action)=>{
-            state.todos=state.todos.filter(todo=>todo.id!=action.payload)
-        },
-        completetodo:(state,action)=>{
-            const todo=state.todos.find(todo=>todo.id===action.payload )
-                      if(todo){
-                        todo.isCompleted=!todo.isCompleted;
-                      }
-        
-        },updatetodo:(state,action)=>{
-            const {id,value}=action.payload
-              const todo=state.todos.find(todo=>todo.id==id)
-              if(todo && !todo.isCompleted){
-                  todo.value=value
-              }
-             
-},
+      state.todos.push(todo);
+    },
 
- setEditingTodo: (state, action) => {
-                      let {id,value}=action.payload;   
-                const todo=state.todos.find(todo=>todo.id==id);
+    deleteTodo: (state, action) => {
+      state.todos = state.todos.filter(
+        (todo) => todo.id !== action.payload
+      );
+    },
 
-                if(todo && !todo.isCompleted){
-                    state.editingTodo=action.payload;
-                }
-                          
-        }
+    updateTodo: (state, action) => {
+      const { id, title, description, priority,status, dueDate, category } =
+        action.payload;
 
-    }
-})
+      const todo = state.todos.find((todo) => todo.id === id);
 
-export const {addTodo,deleteTodo,completetodo,updatetodo,setEditingTodo}=slice.actions
-export default slice.reducer
+      if (todo) {
+        todo.title = title;
+        todo.description = description;
+        todo.priority = priority;
+        todo.status=status;
+        todo.dueDate = dueDate;
+        todo.category = category;
+
+      }
+    },
+
+    setEditingTodo: (state, action) => {
+      state.editingTodo = action.payload;
+    },
+
+    changeStatus: (state, action) => {
+      const { id, status } = action.payload;
+
+      const todo = state.todos.find((todo) => todo.id === id);
+
+      if (todo) {
+        todo.status = status;
+      }
+    },
+  },
+});
+
+export const {
+  addTodo,
+  deleteTodo,
+  updateTodo,
+  setEditingTodo,
+  changeStatus,
+} = todoSlice.actions;
+
+export default todoSlice.reducer;
