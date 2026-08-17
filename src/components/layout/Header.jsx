@@ -16,7 +16,7 @@ import { useNavigate } from "react-router-dom";
 import { setSearchQuery } from "../../features/search/searchSlice";
 
 import { Input } from "@/components/ui/Input";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/Button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 import { toggleTheme } from "../../features/theme/themeSlice";
