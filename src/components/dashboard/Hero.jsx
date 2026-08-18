@@ -1,11 +1,8 @@
-
 import { useMemo } from "react";
 import { useSelector } from "react-redux";
 import {
   Sparkles,
-  Clock3,
   CheckCircle2,
-  CircleAlert,
   Target,
 } from "lucide-react";
 
@@ -15,8 +12,13 @@ function Hero() {
   const now = new Date();
   const hour = now.getHours();
 
+  const userName =
+    localStorage.getItem("name") || "User";
 
-  const userName = localStorage.getItem("name") || "User";
+  /* =========================
+     Greeting
+  ========================= */
+
   const greeting = useMemo(() => {
     if (hour >= 5 && hour < 12) {
       return {
@@ -55,19 +57,9 @@ function Hero() {
 
   const todayString = `${now.getFullYear()}-${String(
     now.getMonth() + 1
-  ).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
-
-  const formattedDate = now.toLocaleDateString("en-US", {
-    weekday: "long",
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  });
-
-  const formattedTime = now.toLocaleTimeString("en-US", {
-    hour: "numeric",
-    minute: "2-digit",
-  });
+  ).padStart(2, "0")}-${String(
+    now.getDate()
+  ).padStart(2, "0")}`;
 
   /* =========================
      Task Statistics
@@ -98,7 +90,9 @@ function Hero() {
 
   const completionRate =
     totalTasks > 0
-      ? Math.round((completedTasks / totalTasks) * 100)
+      ? Math.round(
+          (completedTasks / totalTasks) * 100
+        )
       : 0;
 
   /* =========================
@@ -111,13 +105,15 @@ function Hero() {
     }
 
     if (overdueTasks > 0) {
-      return `You have ${overdueTasks} overdue ${overdueTasks === 1 ? "task" : "tasks"
-        }. Consider handling those first.`;
+      return `You have ${overdueTasks} overdue ${
+        overdueTasks === 1 ? "task" : "tasks"
+      }. Consider handling those first.`;
     }
 
     if (todayTasks > 0) {
-      return `You have ${todayTasks} ${todayTasks === 1 ? "task" : "tasks"
-        } due today. Stay focused.`;
+      return `You have ${todayTasks} ${
+        todayTasks === 1 ? "task" : "tasks"
+      } due today. Stay focused.`;
     }
 
     if (pendingTasks === 0) {
@@ -138,7 +134,7 @@ function Hero() {
   ]);
 
   return (
-    <section className="relative overflow-hidden rounded-3xl border border-border bg-card p-6 shadow-sm sm:p-8">
+    <section className="relative overflow-hidden rounded-3xl border border-border bg-card p-5 shadow-sm sm:p-8">
 
       {/* Background Glow */}
 
@@ -148,70 +144,60 @@ function Hero() {
 
       <div className="relative">
 
-        {/* Top Row */}
+        {/* =========================
+            TOP SECTION
+        ========================= */}
 
-        <div className="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
+        <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
 
           {/* Greeting */}
 
           <div className="max-w-2xl">
 
-            <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-indigo-500/30 bg-indigo-500/10 px-4 py-2 text-indigo-500">
+            {/* Badge */}
 
-              <Sparkles size={17} />
+            <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-indigo-500/30 bg-indigo-500/10 px-3 py-1.5 text-indigo-500 sm:px-4 sm:py-2">
 
-              <span className="text-sm font-medium">
+              <Sparkles size={16} />
+
+              <span className="text-xs font-medium sm:text-sm">
                 Personal Productivity
               </span>
 
             </div>
 
-            <h1 className="text-4xl font-black tracking-tight text-foreground sm:text-5xl">
-              {`${greeting.title } ,`}<br />{userName ? `${userName}!` : ""}
+            {/* Greeting */}
+
+            <h1 className="text-3xl font-black tracking-tight text-foreground sm:text-5xl">
+              {greeting.title},{" "}
+              <span>
+                {userName}!
+              </span>
             </h1>
 
-            <p className="mt-4 text-base leading-7 text-muted-foreground">
+            {/* Greeting Message */}
+
+            <p className="mt-3 text-sm leading-6 text-muted-foreground sm:text-base sm:leading-7">
               {greeting.message}
             </p>
 
-            <p className="mt-3 max-w-xl text-sm text-muted-foreground">
+            {/* Smart Productivity Message */}
+
+            <p className="mt-2 max-w-xl text-sm leading-6 text-muted-foreground">
               {productivityMessage}
             </p>
 
-            {/* Date + Time */}
-
-            <div className="mt-6 flex flex-wrap items-center gap-3">
-
-              <div className="flex items-center gap-2 rounded-xl border border-border bg-background/70 px-4 py-2.5">
-
-                <Clock3
-                  size={16}
-                  className="text-indigo-500"
-                />
-
-                <span className="text-sm font-medium text-foreground">
-                  {formattedTime}
-                </span>
-
-              </div>
-
-              <div className="rounded-xl border border-border bg-background/70 px-4 py-2.5">
-
-                <span className="text-sm text-muted-foreground">
-                  {formattedDate}
-                </span>
-
-              </div>
-
-            </div>
-
           </div>
 
-          {/* Productivity Score */}
+          {/* =========================
+              PRODUCTIVITY SCORE
+          ========================= */}
 
-          <div className="flex shrink-0 items-center justify-center">
+          <div className="flex shrink-0 justify-center lg:justify-end">
 
-            <div className="relative flex h-36 w-36 items-center justify-center rounded-full border-8 border-indigo-500/10">
+            <div className="relative flex h-28 w-28 items-center justify-center rounded-full border-8 border-indigo-500/10 sm:h-36 sm:w-36">
+
+              {/* Progress Ring */}
 
               <div
                 className="absolute inset-0 rounded-full"
@@ -227,13 +213,15 @@ function Hero() {
                 }}
               />
 
+              {/* Score */}
+
               <div className="text-center">
 
-                <p className="text-3xl font-black text-foreground">
+                <p className="text-2xl font-black text-foreground sm:text-3xl">
                   {completionRate}%
                 </p>
 
-                <p className="text-xs font-medium text-muted-foreground">
+                <p className="text-[10px] font-medium text-muted-foreground sm:text-xs">
                   Completed
                 </p>
 
@@ -245,22 +233,27 @@ function Hero() {
 
         </div>
 
-        {/* Statistics */}
+        {/* =========================
+            DAILY FOCUS
+        ========================= */}
 
-      
-        {/* Daily Focus */}
-
-        <div className="mt-8 grid gap-4 lg:grid-cols-[1fr_auto]">
+        <div className="mt-6 grid gap-3 sm:gap-4 lg:grid-cols-[1fr_auto]">
 
           {/* Focus Message */}
 
-          <div className="rounded-2xl border border-border bg-background/60 p-5">
+          <div className="rounded-2xl border border-border bg-background/60 p-4 sm:p-5">
 
-            <div className="flex items-start gap-4">
+            <div className="flex items-start gap-3 sm:gap-4">
 
-              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-indigo-500/10 text-indigo-500">
-                <Target size={21} />
+              {/* Icon */}
+
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-indigo-500/10 text-indigo-500 sm:h-11 sm:w-11">
+
+                <Target size={20} />
+
               </div>
+
+              {/* Content */}
 
               <div className="min-w-0">
 
@@ -268,27 +261,36 @@ function Hero() {
                   Today's Focus
                 </p>
 
-                <h3 className="mt-1 text-lg font-bold text-foreground">
+                <h3 className="mt-1 text-base font-bold text-foreground sm:text-lg">
                   {overdueTasks > 0
                     ? "Clear your overdue tasks"
                     : todayTasks > 0
-                      ? "Focus on today's deadlines"
-                      : pendingTasks > 0
-                        ? "Make progress on your priorities"
-                        : "You're all caught up"}
+                    ? "Focus on today's deadlines"
+                    : pendingTasks > 0
+                    ? "Make progress on your priorities"
+                    : "You're all caught up"}
                 </h3>
 
-                <p className="mt-1 text-sm text-muted-foreground">
+                <p className="mt-1 text-sm leading-5 text-muted-foreground">
                   {overdueTasks > 0
-                    ? `You have ${overdueTasks} overdue ${overdueTasks === 1 ? "task" : "tasks"
-                    } that need attention.`
+                    ? `You have ${overdueTasks} overdue ${
+                        overdueTasks === 1
+                          ? "task"
+                          : "tasks"
+                      } that need attention.`
                     : todayTasks > 0
-                      ? `${todayTasks} ${todayTasks === 1 ? "task is" : "tasks are"
+                    ? `${todayTasks} ${
+                        todayTasks === 1
+                          ? "task is"
+                          : "tasks are"
                       } scheduled for today.`
-                      : pendingTasks > 0
-                        ? `${pendingTasks} ${pendingTasks === 1 ? "task remains" : "tasks remain"
-                        } on your list.`
-                        : "Take a moment to plan your next goal."}
+                    : pendingTasks > 0
+                    ? `${pendingTasks} ${
+                        pendingTasks === 1
+                          ? "task remains"
+                          : "tasks remain"
+                      } on your list.`
+                    : "Take a moment to plan your next goal."}
                 </p>
 
               </div>
@@ -297,13 +299,16 @@ function Hero() {
 
           </div>
 
-          {/* Completion Progress */}
+          {/* =========================
+              COMPLETION PROGRESS
+          ========================= */}
 
-          <div className="min-w-[220px] rounded-2xl border border-border bg-background/60 p-5">
+          <div className="min-w-0 rounded-2xl border border-border bg-background/60 p-4 sm:min-w-[220px] sm:p-5">
 
             <div className="flex items-center justify-between">
 
               <div>
+
                 <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                   Daily Progress
                 </p>
@@ -311,15 +316,20 @@ function Hero() {
                 <p className="mt-1 text-2xl font-black text-foreground">
                   {completionRate}%
                 </p>
+
               </div>
 
-              <div className="flex h-11 w-11 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-500">
-                <CheckCircle2 size={21} />
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-500 sm:h-11 sm:w-11">
+
+                <CheckCircle2 size={20} />
+
               </div>
 
             </div>
 
-            <div className="mt-4 h-2 overflow-hidden rounded-full bg-muted">
+            {/* Progress Bar */}
+
+            <div className="mt-3 h-2 overflow-hidden rounded-full bg-muted">
 
               <div
                 className="h-full rounded-full bg-indigo-500 transition-all duration-700"
@@ -338,8 +348,6 @@ function Hero() {
 
         </div>
 
-
-
       </div>
 
     </section>
@@ -347,4 +355,3 @@ function Hero() {
 }
 
 export default Hero;
-

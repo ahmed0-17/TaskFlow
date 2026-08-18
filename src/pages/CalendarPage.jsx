@@ -38,24 +38,39 @@ function CalendarPage() {
     year: "numeric",
   });
 
-  const today = new Date();
+  /* =========================
+     DATE HELPERS
+  ========================= */
 
-  // YYYY-MM-DD
   const formatDate = (date) => {
     return `${date.getFullYear()}-${String(
       date.getMonth() + 1
-    ).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+    ).padStart(2, "0")}-${String(
+      date.getDate()
+    ).padStart(2, "0")}`;
   };
 
-  const selectedDateString = formatDate(selectedDate);
+  const today = new Date();
   const todayString = formatDate(today);
+  const selectedDateString = formatDate(selectedDate);
+
+  /*
+    IMPORTANT:
+    Past date = date before today
+  */
+  const isSelectedDatePast =
+    selectedDateString < todayString;
 
   /* =========================
-     Calendar Days
+     CALENDAR DAYS
   ========================= */
 
   const calendarDays = useMemo(() => {
-    const firstDay = new Date(year, month, 1).getDay();
+    const firstDay = new Date(
+      year,
+      month,
+      1
+    ).getDay();
 
     const daysInMonth = new Date(
       year,
@@ -86,9 +101,17 @@ function CalendarPage() {
     }
 
     // Current month
-    for (let day = 1; day <= daysInMonth; day++) {
+    for (
+      let day = 1;
+      day <= daysInMonth;
+      day++
+    ) {
       days.push({
-        date: new Date(year, month, day),
+        date: new Date(
+          year,
+          month,
+          day
+        ),
         currentMonth: true,
       });
     }
@@ -98,7 +121,11 @@ function CalendarPage() {
 
     while (days.length < 42) {
       days.push({
-        date: new Date(year, month + 1, nextDay),
+        date: new Date(
+          year,
+          month + 1,
+          nextDay
+        ),
         currentMonth: false,
       });
 
@@ -109,18 +136,26 @@ function CalendarPage() {
   }, [month, year]);
 
   /* =========================
-     Navigation
+     NAVIGATION
   ========================= */
 
   const previousMonth = () => {
     setCurrentDate(
-      new Date(year, month - 1, 1)
+      new Date(
+        year,
+        month - 1,
+        1
+      )
     );
   };
 
   const nextMonth = () => {
     setCurrentDate(
-      new Date(year, month + 1, 1)
+      new Date(
+        year,
+        month + 1,
+        1
+      )
     );
   };
 
@@ -139,14 +174,12 @@ function CalendarPage() {
   };
 
   /* =========================
-     Select Date
+     SELECT DATE
   ========================= */
 
   const selectDate = (date) => {
     setSelectedDate(date);
 
-    // If date belongs to another month,
-    // move calendar to that month.
     setCurrentDate(
       new Date(
         date.getFullYear(),
@@ -157,15 +190,23 @@ function CalendarPage() {
   };
 
   /* =========================
-     Add Task
+     ADD TASK
   ========================= */
 
   const openAddTask = (date = selectedDate) => {
-    // IMPORTANT:
-    // Set selected date first.
+    const dateString = formatDate(date);
+
+    /*
+      IMPORTANT:
+      Never allow task creation for
+      dates before today.
+    */
+    if (dateString < todayString) {
+      return;
+    }
+
     setSelectedDate(date);
 
-    // Move calendar to selected date's month.
     setCurrentDate(
       new Date(
         date.getFullYear(),
@@ -174,7 +215,6 @@ function CalendarPage() {
       )
     );
 
-    // Open form AFTER selected date is updated.
     setShowTaskForm(true);
   };
 
@@ -183,15 +223,16 @@ function CalendarPage() {
   };
 
   /* =========================
-     Selected Tasks
+     SELECTED TASKS
   ========================= */
 
   const selectedTasks = todos.filter(
-    (task) => task.dueDate === selectedDateString
+    (task) =>
+      task.dueDate === selectedDateString
   );
 
   /* =========================
-     Styles
+     STYLES
   ========================= */
 
   const getPriorityStyle = (priority) => {
@@ -237,7 +278,7 @@ function CalendarPage() {
     <div className="space-y-6">
 
       {/* =========================
-          Page Header
+          PAGE HEADER
       ========================= */}
 
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
@@ -264,6 +305,8 @@ function CalendarPage() {
 
         <div className="flex flex-wrap gap-2">
 
+          {/* TODAY */}
+
           <Button
             onClick={goToday}
             variant="outline"
@@ -273,17 +316,24 @@ function CalendarPage() {
               size={17}
               className="mr-2"
             />
+
             Today
           </Button>
 
+          {/* ADD TASK */}
+
           <Button
-            onClick={() => openAddTask(selectedDate)}
+            onClick={() =>
+              openAddTask(selectedDate)
+            }
+            disabled={isSelectedDatePast}
             className="rounded-xl"
           >
             <Plus
               size={17}
               className="mr-2"
             />
+
             Add Task
           </Button>
 
@@ -292,17 +342,18 @@ function CalendarPage() {
       </div>
 
       {/* =========================
-          Calendar
+          CALENDAR
       ========================= */}
 
       <Card
-        className={`overflow-hidden rounded-3xl ${theme === "light"
+        className={`overflow-hidden rounded-3xl ${
+          theme === "light"
             ? "bg-white"
             : "bg-slate-900"
-          }`}
+        }`}
       >
 
-        {/* Calendar Header */}
+        {/* CALENDAR HEADER */}
 
         <div className="flex flex-col gap-4 border-b p-5 sm:flex-row sm:items-center sm:justify-between">
 
@@ -345,7 +396,7 @@ function CalendarPage() {
 
         </div>
 
-        {/* Weekdays */}
+        {/* WEEKDAYS */}
 
         <div className="grid grid-cols-7 border-b">
 
@@ -368,62 +419,74 @@ function CalendarPage() {
 
         </div>
 
-        {/* Calendar Grid */}
+        {/* CALENDAR GRID */}
 
         <div className="grid grid-cols-7">
 
           {calendarDays.map(
             ({ date, currentMonth }, index) => {
 
-              const dateString = formatDate(date);
+              const dateString =
+                formatDate(date);
 
-              const dayTasks = todos.filter(
-                (task) =>
-                  task.dueDate === dateString
-              );
+              const dayTasks =
+                todos.filter(
+                  (task) =>
+                    task.dueDate ===
+                    dateString
+                );
 
               const isToday =
-                dateString === todayString;
+                dateString ===
+                todayString;
 
               const isSelected =
-                dateString === selectedDateString;
+                dateString ===
+                selectedDateString;
 
-              const isPastDate = dateString < todayString;
+              const isPastDate =
+                dateString <
+                todayString;
 
               return (
                 <div
                   key={index}
-                  onClick={() => selectDate(date)}
-                  className={`group/date relative min-h-28 cursor-pointer border-b border-r p-2 text-left transition-all hover:bg-indigo-500/5 sm:min-h-32 ${!currentMonth
+                  onClick={() =>
+                    selectDate(date)
+                  }
+                  className={`group/date relative min-h-28 cursor-pointer border-b border-r p-2 text-left transition-all hover:bg-indigo-500/5 sm:min-h-32 ${
+                    !currentMonth
                       ? "opacity-40"
                       : ""
-                    } ${isSelected
+                  } ${
+                    isSelected
                       ? "bg-indigo-500/10 ring-2 ring-inset ring-indigo-500"
                       : ""
-                    }`}
+                  }`}
                 >
 
-                  {/* Date Header */}
+                  {/* DATE HEADER */}
 
                   <div className="flex items-center justify-between">
 
                     <span
-                      className={`flex h-8 w-8 items-center justify-center rounded-full text-sm font-semibold ${isToday
+                      className={`flex h-8 w-8 items-center justify-center rounded-full text-sm font-semibold ${
+                        isToday
                           ? "bg-indigo-600 text-white shadow-lg"
                           : "text-foreground"
-                        }`}
+                      }`}
                     >
                       {date.getDate()}
                     </span>
 
                     {/* ADD BUTTON */}
+
                     {!isPastDate && (
                       <button
                         type="button"
                         onClick={(e) => {
                           e.stopPropagation();
 
-                          selectDate(date);
                           openAddTask(date);
                         }}
                         className="flex h-8 items-center gap-1 rounded-lg bg-indigo-500 px-2.5 text-xs font-semibold text-white opacity-0 shadow-sm transition-all duration-200 group-hover/date:opacity-100 hover:bg-indigo-600"
@@ -435,7 +498,7 @@ function CalendarPage() {
 
                   </div>
 
-                  {/* Tasks */}
+                  {/* TASKS */}
 
                   <div className="mt-2 space-y-1">
 
@@ -447,22 +510,31 @@ function CalendarPage() {
                           onClick={(e) => {
                             e.stopPropagation();
 
-                            setSelectedTask(task);
+                            setSelectedTask(
+                              task
+                            );
                           }}
-                          className={`block w-full cursor-pointer truncate rounded-lg px-2 py-1 text-[11px] font-medium transition hover:scale-[1.02] ${task.priority === "High"
+                          className={`block w-full cursor-pointer truncate rounded-lg px-2 py-1 text-[11px] font-medium transition hover:scale-[1.02] ${
+                            task.priority ===
+                            "High"
                               ? "bg-red-500/10 text-red-500 hover:bg-red-500/20"
-                              : task.priority === "Medium"
-                                ? "bg-yellow-500/10 text-yellow-500 hover:bg-yellow-500/20"
-                                : "bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/20"
-                            }`}
+                              : task.priority ===
+                                "Medium"
+                              ? "bg-yellow-500/10 text-yellow-500 hover:bg-yellow-500/20"
+                              : "bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/20"
+                          }`}
                         >
                           {task.title}
                         </span>
                       ))}
 
-                    {dayTasks.length > 3 && (
+                    {dayTasks.length >
+                      3 && (
                       <div className="px-2 text-[11px] text-muted-foreground">
-                        +{dayTasks.length - 3} more
+                        +
+                        {dayTasks.length -
+                          3}{" "}
+                        more
                       </div>
                     )}
 
@@ -475,7 +547,7 @@ function CalendarPage() {
 
         </div>
 
-        {/* Legend */}
+        {/* LEGEND */}
 
         <div className="flex flex-wrap items-center gap-5 border-t p-4">
 
@@ -504,22 +576,24 @@ function CalendarPage() {
       </Card>
 
       {/* =========================
-    Selected Day - Existing Tasks
-========================= */}
+          SELECTED DAY
+      ========================= */}
 
       <Card className="rounded-3xl p-6">
 
-        {/* Section Header */}
         <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
 
           <div>
             <h2 className="text-xl font-bold">
-              {selectedDate.toLocaleDateString("en-US", {
-                weekday: "long",
-                day: "numeric",
-                month: "long",
-                year: "numeric",
-              })}
+              {selectedDate.toLocaleDateString(
+                "en-US",
+                {
+                  weekday: "long",
+                  day: "numeric",
+                  month: "long",
+                  year: "numeric",
+                }
+              )}
             </h2>
 
             <p className="text-sm text-muted-foreground">
@@ -529,12 +603,15 @@ function CalendarPage() {
 
           <Badge variant="outline">
             {selectedTasks.length}{" "}
-            {selectedTasks.length === 1 ? "Task" : "Tasks"}
+            {selectedTasks.length === 1
+              ? "Task"
+              : "Tasks"}
           </Badge>
 
         </div>
 
-        {/* Existing Tasks */}
+        {/* EXISTING TASKS */}
+
         {selectedTasks.length === 0 ? (
 
           <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed py-12 text-center">
@@ -563,21 +640,24 @@ function CalendarPage() {
               <button
                 key={task.id}
                 type="button"
-                onClick={() => setSelectedTask(task)}
+                onClick={() =>
+                  setSelectedTask(task)
+                }
                 className="w-full rounded-2xl border bg-background p-5 text-left transition hover:-translate-y-1 hover:shadow-lg"
               >
 
-                {/* Task Header */}
+                {/* TASK HEADER */}
+
                 <div className="flex items-start justify-between gap-3">
 
                   <div className="flex items-start gap-3">
 
-                    {/* Status Icon */}
                     <div className="mt-1">
-                      {getStatusIcon(task.status)}
+                      {getStatusIcon(
+                        task.status
+                      )}
                     </div>
 
-                    {/* Title + Description */}
                     <div className="min-w-0">
 
                       <h3 className="truncate font-bold">
@@ -585,17 +665,19 @@ function CalendarPage() {
                       </h3>
 
                       <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">
-                        {task.description || "No description"}
+                        {task.description ||
+                          "No description"}
                       </p>
 
                     </div>
 
                   </div>
 
-                  {/* Priority */}
                   <Badge
                     variant="outline"
-                    className={getPriorityStyle(task.priority)}
+                    className={getPriorityStyle(
+                      task.priority
+                    )}
                   >
                     <Flag
                       size={13}
@@ -607,22 +689,20 @@ function CalendarPage() {
 
                 </div>
 
-                {/* Task Details */}
+                {/* TASK DETAILS */}
+
                 <div className="mt-4 flex flex-wrap items-center gap-2">
 
-                  {/* Category */}
                   {task.category && (
                     <Badge variant="secondary">
                       {task.category}
                     </Badge>
                   )}
 
-                  {/* Status */}
                   <Badge variant="outline">
                     {task.status}
                   </Badge>
 
-                  {/* Due Date */}
                   <Badge variant="outline">
                     <CalendarDays
                       size={13}
@@ -645,10 +725,11 @@ function CalendarPage() {
       </Card>
 
       {/* =========================
-          Add Task Modal
+          ADD TASK MODAL
       ========================= */}
 
       {showTaskForm && (
+
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
 
           <div className="relative max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-3xl border border-border bg-background p-6 shadow-2xl">
@@ -680,9 +761,11 @@ function CalendarPage() {
                     {selectedDate.toLocaleDateString(
                       "en-US",
                       {
-                        weekday: "long",
+                        weekday:
+                          "long",
                         day: "numeric",
-                        month: "long",
+                        month:
+                          "long",
                         year: "numeric",
                       }
                     )}
@@ -694,26 +777,27 @@ function CalendarPage() {
 
             </div>
 
-            {/* IMPORTANT:
-                selectedDateString is passed to TodoForm
-                so the Due Date input gets the clicked date.
-            */}
-
             <TodoForm
-              defaultDueDate={selectedDateString}
-              onSuccess={closeTaskForm}
+              defaultDueDate={
+                selectedDateString
+              }
+              onSuccess={
+                closeTaskForm
+              }
             />
 
           </div>
 
         </div>
+
       )}
 
       {/* =========================
-          Task Details Modal
+          TASK DETAILS MODAL
       ========================= */}
 
       {selectedTask && (
+
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
 
           <TaskDetailsModal
@@ -724,6 +808,7 @@ function CalendarPage() {
           />
 
         </div>
+
       )}
 
     </div>

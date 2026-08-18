@@ -37,9 +37,26 @@ import {
 function TodoForm({ defaultDueDate = "", onSuccess }) {
   const dispatch = useDispatch();
 
+
+
+
   const editingTodo = useSelector(
     (state) => state.todo.editingTodo
   );
+
+
+
+const getLocalDateString = () => {
+  const date = new Date();
+
+  return `${date.getFullYear()}-${String(
+    date.getMonth() + 1
+  ).padStart(2, "0")}-${String(
+    date.getDate()
+  ).padStart(2, "0")}`;
+};
+
+
 
   const [formData, setFormData] = useState({
     title: "",
@@ -112,12 +129,12 @@ function TodoForm({ defaultDueDate = "", onSuccess }) {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-const today = new Date().toISOString().split("T")[0];
+    const today = getLocalDateString();
 
-if (formData.dueDate < today) {
-  toast.error("Due date cannot be before today");
-  return;
-}
+    if (formData.dueDate && formData.dueDate < today) {
+      toast.error("Due date cannot be before today");
+      return;
+    }
 
     if (!formData.title.trim()) return;
 
@@ -159,11 +176,11 @@ if (formData.dueDate < today) {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
     >
-      <Card className="border-1 p-3 bg-transparent shadow-none">
+      <Card className="border p-5 sm:p-6 bg-transparent shadow-none">
 
         {/* Header */}
 
-        <div className="mb-6">
+        <div className="mb-8">
           <h2 className="text-2xl font-bold text-foreground">
             {editingTodo
               ? "Update Task"
@@ -229,170 +246,142 @@ if (formData.dueDate < today) {
               />
             </div>
           </div>
+{/* Task Options */}
 
-          {/* Priority + Status */}
+<div className="grid grid-cols-1 gap-5 sm:grid-cols-2 xl:grid-cols-4">
 
-          <div className="grid gap-5 md:grid-cols-2">
+  {/* Priority */}
+  <div className="space-y-2">
+    <Label>Priority</Label>
 
-            <div className="space-y-2">
-              <Label>Priority</Label>
+    <Select
+      value={formData.priority}
+      onValueChange={(value) =>
+        handleChange("priority", value)
+      }
+    >
+      <SelectTrigger className="h-11 w-full">
+        <Flag size={16} className="shrink-0" />
+        <SelectValue placeholder="Select priority" />
+      </SelectTrigger>
 
-              <Select
-                value={formData.priority}
-                onValueChange={(value) =>
-                  handleChange(
-                    "priority",
-                    value
-                  )
-                }
-              >
-                <SelectTrigger>
-                  <Flag size={16} />
-                  <SelectValue />
-                </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="Low">Low</SelectItem>
+        <SelectItem value="Medium">Medium</SelectItem>
+        <SelectItem value="High">High</SelectItem>
+      </SelectContent>
+    </Select>
+  </div>
 
-                <SelectContent>
-                  <SelectItem value="Low">
-                    Low
-                  </SelectItem>
+  {/* Status */}
+  <div className="space-y-2">
+    <Label>Status</Label>
 
-                  <SelectItem value="Medium">
-                    Medium
-                  </SelectItem>
+    <Select
+      value={formData.status}
+      onValueChange={(value) =>
+        handleChange("status", value)
+      }
+    >
+      <SelectTrigger className="h-11 w-full">
+        <SelectValue placeholder="Select status" />
+      </SelectTrigger>
 
-                  <SelectItem value="High">
-                    High
-                  </SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+      <SelectContent>
+        <SelectItem value="Todo">Todo</SelectItem>
+        <SelectItem value="In Progress">
+          In Progress
+        </SelectItem>
+        <SelectItem value="Completed">
+          Completed
+        </SelectItem>
+      </SelectContent>
+    </Select>
+  </div>
 
-            <div className="space-y-2">
-              <Label>Status</Label>
+  {/* Category */}
+  <div className="space-y-2">
+    <Label>Category</Label>
 
-              <Select
-                value={formData.status}
-                onValueChange={(value) =>
-                  handleChange(
-                    "status",
-                    value
-                  )
-                }
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
+    <Select
+      value={formData.category}
+      onValueChange={(value) =>
+        handleChange("category", value)
+      }
+    >
+      <SelectTrigger className="h-11 w-full">
+        <Folder size={16} className="shrink-0" />
+        <SelectValue placeholder="Select category" />
+      </SelectTrigger>
 
-                <SelectContent>
-                  <SelectItem value="Todo">
-                    Todo
-                  </SelectItem>
+      <SelectContent>
+        <SelectItem value="Personal">
+          Personal
+        </SelectItem>
+        <SelectItem value="Work">Work</SelectItem>
+        <SelectItem value="Study">Study</SelectItem>
+        <SelectItem value="Shopping">
+          Shopping
+        </SelectItem>
+      </SelectContent>
+    </Select>
+  </div>
 
-                  <SelectItem value="In Progress">
-                    In Progress
-                  </SelectItem>
+  {/* Due Date */}
+  <div className="space-y-2">
+    <Label>Due Date</Label>
 
-                  <SelectItem value="Completed">
-                    Completed
-                  </SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+    <div className="relative">
+      <CalendarDays
+        size={17}
+        className="
+          pointer-events-none
+          absolute left-3 top-1/2
+          -translate-y-1/2
+          text-muted-foreground
+        "
+      />
 
-          </div>
+      <Input
+        type="date"
+        value={formData.dueDate}
+        min={new Date().toISOString().split("T")[0]}
+        onChange={(e) =>
+          handleChange(
+            "dueDate",
+            e.target.value
+          )
+        }
+        className="h-11 w-full pl-10"
+      />
+    </div>
+  </div>
 
-          {/* Category + Date */}
+</div>
 
-          <div className="grid gap-5 md:grid-cols-2">
+{/* Submit */}
 
-            <div className="space-y-2">
-              <Label>Category</Label>
+<Button
+  type="submit"
+  className="h-12 w-full rounded-xl text-base"
+>
+  {editingTodo ? (
+    <>
+      <Save className="mr-2" />
+      Update Task
+    </>
+  ) : (
+    <>
+      <Plus className="mr-2" />
+      Add Task
+    </>
+  )}
+</Button>
 
-              <Select
-                value={formData.category}
-                onValueChange={(value) =>
-                  handleChange(
-                    "category",
-                    value
-                  )
-                }
-              >
-                <SelectTrigger>
-                  <Folder size={16} />
-                  <SelectValue />
-                </SelectTrigger>
+</form>
 
-                <SelectContent>
-                  <SelectItem value="Personal">
-                    Personal
-                  </SelectItem>
-
-                  <SelectItem value="Work">
-                    Work
-                  </SelectItem>
-
-                  <SelectItem value="Study">
-                    Study
-                  </SelectItem>
-
-                  <SelectItem value="Shopping">
-                    Shopping
-                  </SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            {/* Due Date */}
-
-            <div className="space-y-2">
-              <Label>Due Date</Label>
-
-              <div className="relative">
-                <CalendarDays
-                  size={18}
-                  className="absolute left-3 top-3 text-muted-foreground"
-                />
-
-                <Input
-                  type="date"
-                  value={formData.dueDate}
-                  min={new Date().toISOString().split("T")[0]}
-                  onChange={(e) =>
-                    handleChange(
-                      "dueDate",
-                      e.target.value
-                    )
-                  }
-                  className="pl-10"
-                />
-            </div>
-            </div>
-
-          </div>
-
-          {/* Submit */}
-
-          <Button
-            type="submit"
-            className="h-12 w-full rounded-xl text-base"
-          >
-            {editingTodo ? (
-              <>
-                <Save className="mr-2" />
-                Update Task
-              </>
-            ) : (
-              <>
-                <Plus className="mr-2" />
-                Add Task
-              </>
-            )}
-          </Button>
-
-        </form>
-
-      </Card>
-    </motion.div>
+</Card>
+</motion.div>
   );
 }
 

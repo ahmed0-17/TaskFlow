@@ -113,16 +113,16 @@ function Header({ sidebarOpen, setSidebarOpen }) {
     );
   };
 
-const openTask = (task) => {
-  setShowSearchResults(false);
-  dispatch(setSearchQuery(""));
+  const openTask = (task) => {
+    setShowSearchResults(false);
+    dispatch(setSearchQuery(""));
 
-  navigate("/", {
-    state: {
-      scrollToTaskId: task.id,
-    },
-  });
-};
+    navigate("/", {
+      state: {
+        scrollToTaskId: task.id,
+      },
+    });
+  };
 
   /* =========================
      NOTIFICATIONS
@@ -197,28 +197,27 @@ const openTask = (task) => {
 
   return (
     <header
-  className={`
+      className={`
     fixed left-0 right-0 top-0 z-40
     h-16 sm:h-20
     border-b
     backdrop-blur-xl
-    ${
-      theme === "light"
-        ? "border-slate-200 bg-white/80"
-        : "border-slate-800 bg-slate-950/80"
-    }
+    ${theme === "light"
+          ? "border-slate-200 bg-white/80"
+          : "border-slate-800 bg-slate-950/80"
+        }
     lg:left-72
   `}
->
+    >
       <div
-  className="
+        className="
     flex h-full w-full min-w-0
     items-center justify-between
     gap-2 px-4
     sm:px-6
     lg:px-8
   "
->
+      >
         {/* LEFT */}
 
         <div className="flex min-w-0 items-center gap-3">
@@ -291,10 +290,9 @@ const openTask = (task) => {
                     rounded-2xl
                     border
                     shadow-2xl
-                    ${
-                      theme === "light"
-                        ? "border-slate-200 bg-white"
-                        : "border-slate-800 bg-slate-900"
+                    ${theme === "light"
+                      ? "border-slate-200 bg-white"
+                      : "border-slate-800 bg-slate-900"
                     }
                   `}
                 >
@@ -338,7 +336,7 @@ const openTask = (task) => {
                         >
                           <div className="mt-1 shrink-0">
                             {task.status ===
-                            "Completed" ? (
+                              "Completed" ? (
                               <CircleCheck
                                 size={18}
                                 className="text-emerald-500"
@@ -374,12 +372,11 @@ const openTask = (task) => {
                                   className={`
                                     flex items-center gap-1
                                     text-xs
-                                    ${
-                                      task.priority ===
+                                    ${task.priority ===
                                       "High"
-                                        ? "text-red-500"
-                                        : task.priority ===
-                                          "Medium"
+                                      ? "text-red-500"
+                                      : task.priority ===
+                                        "Medium"
                                         ? "text-yellow-500"
                                         : "text-emerald-500"
                                     }
@@ -402,7 +399,13 @@ const openTask = (task) => {
                         type="button"
                         onClick={() => {
                           setShowSearchResults(false);
-                          navigate("/tasks");
+                          dispatch(setSearchQuery(""));
+
+                          navigate("/", {
+                            state: {
+                              scrollToTaskId: "all",
+                            },
+                          });
                         }}
                         className="text-xs font-medium text-indigo-500 hover:text-indigo-400"
                       >
@@ -444,28 +447,27 @@ const openTask = (task) => {
                 </span>
               )}
             </Button>
-
             {/* NOTIFICATION DROPDOWN */}
-
             {showNotifications && (
               <div
                 className={`
-                  absolute right-0 top-14 z-[100]
-                  w-[calc(100vw-2rem)]
-                  max-w-96
-                  overflow-hidden
-                  rounded-2xl
-                  border
-                  shadow-2xl
-                  ${
-                    theme === "light"
-                      ? "border-slate-200 bg-white"
-                      : "border-slate-800 bg-slate-900"
+      fixed left-3 right-3 top-[4.5rem] z-[100]
+      w-auto
+      overflow-hidden
+      rounded-2xl
+      border
+      shadow-2xl
+      sm:absolute sm:left-auto sm:right-0 sm:top-14
+      sm:w-[380px]
+      ${theme === "light"
+                    ? "border-slate-200 bg-white"
+                    : "border-slate-800 bg-slate-900"
                   }
-                `}
+    `}
               >
-                <div className="flex items-center justify-between border-b p-4">
-                  <div>
+                {/* HEADER */}
+                <div className="flex items-center justify-between gap-3 border-b p-3 sm:p-4">
+                  <div className="min-w-0">
                     <h3 className="font-bold">
                       Notifications
                     </h3>
@@ -479,19 +481,30 @@ const openTask = (task) => {
                     <button
                       type="button"
                       onClick={markAllAsRead}
-                      className="flex items-center gap-1 text-xs font-medium text-indigo-500 hover:text-indigo-400"
+                      className="
+            flex shrink-0 items-center gap-1
+            text-xs font-medium
+            text-indigo-500
+            hover:text-indigo-400
+          "
                     >
                       <CheckCheck size={15} />
-                      Mark all read
+                      <span className="hidden xs:inline sm:inline">
+                        Mark all read
+                      </span>
+                      <span className="sm:hidden">
+                        Read all
+                      </span>
                     </button>
                   )}
                 </div>
 
-                <div className="max-h-96 overflow-y-auto">
+                {/* NOTIFICATIONS LIST */}
+                <div className="max-h-[60vh] overflow-y-auto sm:max-h-96">
                   {notifications.length === 0 ? (
-                    <div className="px-6 py-12 text-center">
+                    <div className="px-5 py-10 text-center">
                       <Bell
-                        size={32}
+                        size={30}
                         className="mx-auto mb-3 text-muted-foreground"
                       />
 
@@ -504,89 +517,78 @@ const openTask = (task) => {
                       </p>
                     </div>
                   ) : (
-                    notifications.map(
-                      (notification) => {
-                        const isRead =
-                          readNotifications.includes(
-                            notification.id
-                          );
-
-                        return (
-                          <button
-                            key={notification.id}
-                            type="button"
-                            onClick={() =>
-                              markAsRead(
-                                notification.id
-                              )
-                            }
-                            className={`
-                              flex w-full gap-3
-                              border-b p-4
-                              text-left transition
-                              ${
-                                isRead
-                                  ? "opacity-50"
-                                  : "hover:bg-muted/50"
-                              }
-                            `}
-                          >
-                            <div
-                              className={`
-                                mt-1 h-2.5 w-2.5
-                                shrink-0 rounded-full
-                                ${
-                                  notification.type ===
-                                  "overdue"
-                                    ? "bg-red-500"
-                                    : notification.type ===
-                                      "today"
-                                    ? "bg-amber-500"
-                                    : "bg-indigo-500"
-                                }
-                              `}
-                            />
-
-                            <div className="min-w-0">
-                              <p className="truncate text-sm font-semibold">
-                                {notification.title}
-                              </p>
-
-                              <p className="mt-1 text-xs text-muted-foreground">
-                                {notification.message}
-                              </p>
-                            </div>
-
-                            {!isRead && (
-                              <span className="ml-auto mt-1 h-2 w-2 shrink-0 rounded-full bg-indigo-500" />
-                            )}
-                          </button>
+                    notifications.map((notification) => {
+                      const isRead =
+                        readNotifications.includes(
+                          notification.id
                         );
-                      }
-                    )
+
+                      return (
+                        <button
+                          key={notification.id}
+                          type="button"
+                          onClick={() =>
+                            markAsRead(notification.id)
+                          }
+                          className={`
+                flex w-full items-start gap-3
+                border-b p-3
+                text-left transition
+                last:border-b-0
+                sm:p-4
+                ${isRead
+                              ? "opacity-50"
+                              : "hover:bg-muted/50"
+                            }
+              `}
+                        >
+                          {/* STATUS DOT */}
+                          <div
+                            className={`
+                  mt-1.5 h-2.5 w-2.5
+                  shrink-0 rounded-full
+                  ${notification.type === "overdue"
+                                ? "bg-red-500"
+                                : notification.type === "today"
+                                  ? "bg-amber-500"
+                                  : "bg-indigo-500"
+                              }
+                `}
+                          />
+
+                          {/* CONTENT */}
+                          <div className="min-w-0 flex-1">
+                            <p className="break-words text-sm font-semibold leading-5">
+                              {notification.title}
+                            </p>
+
+                            <p className="mt-1 break-words text-xs leading-5 text-muted-foreground">
+                              {notification.message}
+                            </p>
+                          </div>
+
+                          {/* UNREAD DOT */}
+                          {!isRead && (
+                            <span
+                              className="
+                    mt-1.5 h-2 w-2
+                    shrink-0 rounded-full
+                    bg-indigo-500
+                  "
+                            />
+                          )}
+                        </button>
+                      );
+                    })
                   )}
                 </div>
               </div>
             )}
           </div>
 
-          {/* THEME */}
+        
 
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={() =>
-              dispatch(toggleTheme())
-            }
-            className="shrink-0"
-          >
-            {theme === "light" ? (
-              <Moon size={18} />
-            ) : (
-              <Sun size={18} />
-            )}
-          </Button>
-
+         
           {/* AVATAR */}
 
           <Avatar className="h-9 w-9 shrink-0 sm:h-10 sm:w-10">
