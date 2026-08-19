@@ -98,6 +98,7 @@ A modern, responsive task management application built with React, Redux Toolkit
 * GitHub
 * VS Code
  ### Project Structure
+```
 TaskFlow/
 │
 ├── public/
@@ -149,7 +150,7 @@ TaskFlow/
 ├── package-lock.json
 ├── vite.config.js
 └── README.md
-
+```
 ## Getting Started
 
 ### Prerequisites
