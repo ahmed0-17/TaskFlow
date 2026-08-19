@@ -170,7 +170,7 @@ function Hero() {
 
             <h1 className="text-3xl font-black tracking-tight text-foreground sm:text-5xl">
               {greeting.title},{" "}
-              <span>
+              <span className="text-indigo-500">
                 {userName}!
               </span>
             </h1>
