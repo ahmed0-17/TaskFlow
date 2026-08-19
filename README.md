@@ -109,7 +109,7 @@ TaskFlow/
 │   │   ├── mobile1.png
 │   │   └── mobile2.png
 │   │
-│   └── favicon.png
+│   └── favicon.jpg
 │
 ├── src/
 │   ├── app/
